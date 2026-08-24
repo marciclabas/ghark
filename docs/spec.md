@@ -59,7 +59,7 @@ administrative accounts have been provisioned.
 The public initializer is:
 
 ```sh
-npx ghark init
+npx @marciclabas/ghark init
 ```
 
 The deployment always lives at `~/ghark`, resolved from the home directory of
@@ -336,7 +336,7 @@ On a new Linux VM, the operator installs Node.js and Docker, obtains the S3
 credentials and restic password, and runs:
 
 ```sh
-npx ghark restore
+npx @marciclabas/ghark restore
 ```
 
 The command lists snapshots, restores the selected snapshot into a temporary

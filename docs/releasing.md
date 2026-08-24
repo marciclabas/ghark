@@ -1,6 +1,6 @@
 # Releasing ghark
 
-Releases are published to the public npm registry as `ghark`.
+Releases are published to the public npm registry as `@marciclabas/ghark`.
 GitHub Actions uses npm Trusted Publishing (OIDC), so the repository does not
 store a long-lived npm write token.
 
@@ -8,13 +8,13 @@ store a long-lived npm write token.
 
 Npm requires a package to exist before a trusted publisher can be attached.
 For version `0.1.0`, publish once from a clean checkout using the npm account
-that will own the package:
+that owns the `marciclabas` scope:
 
 ```sh
 npm login
 npm ci
 npm run check
-npm publish
+npm publish --access public
 ```
 
 Then open the package settings on npmjs.com and add this trusted publisher:

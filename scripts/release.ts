@@ -75,7 +75,7 @@ async function main(): Promise<void> {
   }
 
   const manifest = JSON.parse(readFileSync('package.json', 'utf8')) as { name?: string, version?: string }
-  if (manifest.name !== 'ghark' || !manifest.version) throw new Error('package.json must describe the ghark package')
+  if (manifest.name !== '@marciclabas/ghark' || !manifest.version) throw new Error('package.json must describe the @marciclabas/ghark package')
   const version = nextVersion(manifest.version, requested)
   const tag = `v${version}`
 
@@ -98,8 +98,8 @@ async function main(): Promise<void> {
   if (run('gh', ['api', 'user', '--jq', '.login'], true) !== 'marciclabas') {
     throw new Error('The active GitHub CLI account must be marciclabas')
   }
-  const published = command('npm', ['view', `ghark@${version}`, 'version'], true)
-  if (published.status === 0) throw new Error(`ghark@${version} is already published`)
+  const published = command('npm', ['view', `@marciclabas/ghark@${version}`, 'version'], true)
+  if (published.status === 0) throw new Error(`@marciclabas/ghark@${version} is already published`)
   if (!/E404|not found/i.test(published.stderr)) throw new Error(`Could not verify npm version availability: ${published.stderr.trim()}`)
 
   run('npm', ['run', 'check'])

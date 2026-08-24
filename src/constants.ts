@@ -1,4 +1,4 @@
-export const PACKAGE_NAME = 'ghark'
+export const PACKAGE_NAME = '@marciclabas/ghark'
 export const PACKAGE_VERSION = '0.1.0'
 export const SCHEMA_VERSION = 1
 

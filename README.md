@@ -17,7 +17,7 @@ metadata remain accessible in Forgejo.
 You need a Linux VM with Node.js, npm, Docker, and Docker Compose.
 
 ```sh
-npx ghark init
+npx @marciclabas/ghark init
 ```
 
 The deployment always lives at `~/ghark`. ghark supports one deployment per
@@ -149,8 +149,8 @@ volumes are removed afterward, including on failure.
 
 To test the packaged executable without publishing it, install the tarball into
 an empty directory and run `npx --no-install ghark --version`. A local npm
-registry such as Verdaccio can additionally exercise the exact `npx ghark`
-resolution path.
+registry such as Verdaccio can additionally exercise the exact scoped
+`npx @marciclabas/ghark` resolution path.
 
 Maintainers publish through npm Trusted Publishing and GitHub Actions. See
 [the release guide](docs/releasing.md) for the one-time npm bootstrap and the

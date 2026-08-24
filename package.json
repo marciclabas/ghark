@@ -1,5 +1,5 @@
 {
-  "name": "ghark",
+  "name": "@marciclabas/ghark",
   "version": "0.1.0",
   "description": "Your GitHub repositories, safely aboard.",
   "type": "module",
