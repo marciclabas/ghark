@@ -1,6 +1,6 @@
 {
   "name": "@marciclabas/ghark",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Your GitHub repositories, safely aboard.",
   "type": "module",
   "bin": {
