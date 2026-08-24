@@ -24,14 +24,16 @@ The deployment always lives at `~/ghark`. ghark supports one deployment per
 host; its ports remain configurable only to avoid conflicts with unrelated
 services.
 
-The wizard:
+The interactive wizard uses arrow-key selections, Space to toggle multiple
+choices, and Enter to confirm. It:
 
 1. Checks the host and creates the deployment.
 2. Offers the active GitHub CLI login, with a masked classic-token fallback.
 3. Lists every visible GitHub organization and asks which ones to mirror.
 4. Separately asks whether to include repositories owned by your personal account.
 5. Configures one shared administrator login for Forgejo and Gitea Mirror.
-6. Initializes an encrypted restic repository in S3-compatible storage.
+6. Guides you through AWS S3, Cloudflare R2, or a custom S3-compatible service,
+   then initializes an encrypted restic repository there.
 7. Starts the services and installs the nightly backup timer.
 
 The GitHub credential needs `repo` and `read:org` access. Organization selection

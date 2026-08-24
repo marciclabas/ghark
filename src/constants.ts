@@ -9,7 +9,7 @@ export const images = {
 } as const
 
 export const defaults = {
-  forgejoHttpPort: 3000,
+  forgejoHttpPort: 7331,
   forgejoSshPort: 2222,
   mirrorPort: 4321,
   mirrorInterval: '1h',
