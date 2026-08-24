@@ -1,0 +1,54 @@
+{
+  "name": "ghark",
+  "version": "0.1.0",
+  "description": "Your GitHub repositories, safely aboard.",
+  "type": "module",
+  "bin": {
+    "ghark": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "fixture:setup": "tsx scripts/setup-github-fixture.ts",
+    "test": "node --import tsx --test 'test/**/*.test.ts'",
+    "test:minio": "sh scripts/test-minio.sh",
+    "test:upstream": "tsx scripts/test-upstream.ts",
+    "test:github": "tsx scripts/test-github.ts",
+    "check": "tsc -p tsconfig.json --noEmit && npm test",
+    "prepack": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "github",
+    "backup",
+    "mirror",
+    "forgejo",
+    "restic",
+    "s3"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marciclabas/ghark.git"
+  },
+  "homepage": "https://github.com/marciclabas/ghark#readme",
+  "bugs": {
+    "url": "https://github.com/marciclabas/ghark/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}
