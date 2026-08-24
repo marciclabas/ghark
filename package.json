@@ -19,6 +19,7 @@
     "test:minio": "sh scripts/test-minio.sh",
     "test:upstream": "tsx scripts/test-upstream.ts",
     "test:github": "tsx scripts/test-github.ts",
+    "release": "tsx scripts/release.ts",
     "check": "tsc -p tsconfig.json --noEmit && npm test",
     "prepack": "npm run build"
   },

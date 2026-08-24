@@ -31,12 +31,24 @@ require two-factor authentication and disallow tokens.
 
 ## Subsequent releases
 
-1. Update `version` in `package.json` and `package-lock.json` on `main`.
-2. Let CI pass.
-3. Publish a GitHub Release whose tag is exactly `v` followed by that version,
-   for example `v0.2.0`.
-4. The `publish.yml` workflow verifies the tag, runs the test suite, builds the
-   package, and publishes it with npm provenance.
+Use the guarded release command from a clean, up-to-date `main` branch:
+
+```sh
+npm run release -- patch
+# or: yarn release patch
+```
+
+`minor`, `major`, and an exact newer stable version such as `0.2.3` are also
+accepted. Add `--dry-run` to perform all read-only validation and tests without
+changing Git or creating a release. Add `--yes` only for intentional
+non-interactive execution.
+
+The command checks the branch, remote, clean worktree, remote synchronization,
+tag availability, npm version availability, GitHub authentication, and test
+suite. After confirmation it updates both package manifests, commits and tags
+the version, atomically pushes `main` and the tag, and creates the GitHub
+Release. The `publish.yml` workflow then verifies the tag, tests, builds, and
+publishes with npm provenance.
 
 Never reuse an npm version. If the workflow fails after npm accepts a version,
 bump the version before trying again.

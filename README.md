@@ -154,4 +154,4 @@ resolution path.
 
 Maintainers publish through npm Trusted Publishing and GitHub Actions. See
 [the release guide](docs/releasing.md) for the one-time npm bootstrap and the
-versioned GitHub Release workflow.
+guarded `npm run release -- patch` workflow.
