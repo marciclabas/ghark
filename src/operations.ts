@@ -123,5 +123,5 @@ export function stopSync(root: string): void {
 
 export function failoverGuide(root: string): void {
   assertDeployment(root)
-  console.log(`1. Inspect ghark status and confirm the latest synchronization.\n2. Run ghark stop-sync.\n3. Run ghark backup if S3 is reachable.\n4. In Forgejo, convert one low-risk pull mirror to a regular repository.\n5. Verify a test push, then promote repositories deliberately.\n6. Change developer remotes. Never restart Gitea Mirror after the first Forgejo write.`)
+  console.log(`1. Inspect ghark status and confirm the latest synchronization.\n2. Run ghark stop-sync.\n3. Run ghark backup start if S3 is reachable.\n4. In Forgejo, convert one low-risk pull mirror to a regular repository.\n5. Verify a test push, then promote repositories deliberately.\n6. Change developer remotes. Never restart Gitea Mirror after the first Forgejo write.`)
 }

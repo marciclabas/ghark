@@ -283,6 +283,10 @@ A backup is successful only when snapshot creation and the structural repository
 check both succeed. Subset data-check failure marks the run failed and preserves
 all snapshots for investigation.
 
+Manual backups run in the foreground and report each lifecycle stage. Ctrl+C
+aborts active reconciliation or restic work, records a cancelled failure, and
+still runs the service-restart finalizer before exiting with status 130.
+
 An online reconciliation failure does not prevent a valid snapshot of the last
 known good local state. Ghark continues through freeze, snapshot, restart,
 retention, and both verification checks, records the valid snapshot as
@@ -306,14 +310,18 @@ ghark logs [SERVICE]         show the latest redacted service logs
 ghark configure github       change GitHub identity and organization selection
 ghark configure backup       change S3 and restic credentials
 ghark verify [--full]        check services and the S3 restic repository
-ghark backup                 create and verify a backup immediately
+ghark backup                 show backup command help without starting work
+ghark backup start           create and verify a foreground backup immediately
+ghark backup install         install or repair automatic backup scheduling
+ghark backup uninstall       remove automatic scheduling only
+ghark backup status          show timer state and latest backup result
 ghark reconcile              reconcile releases and private release assets
 ghark snapshots              list available recovery points
 ghark restore [SNAPSHOT]     restore into an empty or confirmed target
 ghark update                 apply a compatible ghark/upstream update
 ghark stop-sync              stop Gitea Mirror for failover
 ghark failover-guide         inspect readiness and print promotion steps
-ghark install-timer          install or repair automatic backup scheduling
+ghark install-timer          compatibility alias for backup install
 ```
 
 Commands always operate on `~/ghark`; there is no directory option or

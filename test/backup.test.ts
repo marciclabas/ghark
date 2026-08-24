@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { backupUnlocked } from '../src/backup.js'
+import { backupUnlocked, BackupCancelledError } from '../src/backup.js'
 import type { BackupDependencies } from '../src/backup.js'
 import type { Service } from '../src/constants.js'
 import { writeAtomic } from '../src/files.js'
@@ -61,6 +61,41 @@ test('skips reconciliation without degradation when Gitea Mirror was already sto
     assert.equal(state.success, true)
     assert.equal(state.degraded, undefined)
     assert.equal(state.snapshotId, 'snapshot-1')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('cancellation records failure and restores services stopped for the snapshot', async () => {
+  const root = rootWithEnvironment()
+  const controller = new AbortController()
+  const composeCalls: string[][] = []
+  try {
+    await assert.rejects(backupUnlocked(root, {
+      runningServices: () => ['forgejo', 'gitea-mirror'],
+      compose: (_root, args) => { composeCalls.push(args); return '' },
+      reconcile: async () => ({
+        completedAt: '', durationSeconds: 0, repositoriesScanned: 0, releaseUnitsEnabled: 0,
+        repositoriesResynced: 0, releasesScanned: 0, assetsUploaded: 0,
+        assetsReplaced: 0, assetsSkipped: 0, warnings: []
+      }),
+      restic: async () => {
+        controller.abort()
+        throw new Error('command interrupted')
+      },
+      now: () => 1_000,
+      progress: () => {},
+      signal: controller.signal
+    }), BackupCancelledError)
+    assert.deepEqual(composeCalls, [
+      ['stop', '--timeout', '60', 'gitea-mirror'],
+      ['stop', '--timeout', '60', 'forgejo'],
+      ['up', '--detach', 'forgejo'],
+      ['up', '--detach', 'gitea-mirror']
+    ])
+    const state = JSON.parse(readFileSync(join(root, 'backup-state.json'), 'utf8')) as Record<string, unknown>
+    assert.equal(state.success, false)
+    assert.match(String(state.error), /cancelled by operator/i)
   } finally {
     rmSync(root, { recursive: true, force: true })
   }

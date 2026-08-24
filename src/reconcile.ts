@@ -74,6 +74,7 @@ export type ReconcileDependencies = {
   removeTemporaryDirectory: (path: string) => void
   pollDeadlineMilliseconds: number
   pollIntervalMilliseconds: number
+  signal?: AbortSignal
 }
 
 const defaultDependencies: ReconcileDependencies = {
@@ -88,6 +89,13 @@ const defaultDependencies: ReconcileDependencies = {
 
 const liveStatuses = new Set(['mirrored', 'synced', 'syncing', 'archived'])
 const retainedDestinationStatuses = new Set(['failed', 'mirroring'])
+
+async function request(dependencies: ReconcileDependencies, input: string, init: RequestInit = {}): Promise<Response> {
+  return await dependencies.fetch(input, {
+    ...init,
+    ...(dependencies.signal ? { signal: dependencies.signal } : {})
+  })
+}
 
 function splitRepository(value: string | undefined): { owner: string, repo: string } | undefined {
   const parts = value?.trim().split('/')
@@ -125,7 +133,7 @@ async function forgejoRequest(
 ): Promise<Response> {
   const headers = new Headers(init.headers)
   headers.set('Authorization', `token ${configuration.forgejoToken}`)
-  return await dependencies.fetch(`${configuration.forgejoUrl}${path}`, { ...init, headers })
+  return await request(dependencies, `${configuration.forgejoUrl}${path}`, { ...init, headers })
 }
 
 function retryDelay(response: Response, now: number): number {
@@ -151,7 +159,7 @@ async function githubRequest(
     headers.set('Authorization', `Bearer ${configuration.githubToken}`)
     headers.set('X-GitHub-Api-Version', '2022-11-28')
     headers.set('Accept', headers.get('Accept') ?? 'application/vnd.github+json')
-    const response = await dependencies.fetch(url, { ...init, headers })
+    const response = await request(dependencies, url, { ...init, headers })
     if (![403, 429].includes(response.status) || attempt === 2) return response
     await response.body?.cancel()
     await dependencies.sleep(retryDelay(response, dependencies.now()))
@@ -220,7 +228,7 @@ function cookieHeader(headers: Headers): string {
 }
 
 async function authenticateMirror(configuration: ReconcileConfiguration, dependencies: ReconcileDependencies): Promise<HeadersInit> {
-  const response = await dependencies.fetch(`${configuration.mirrorUrl}/api/auth/sign-in/email`, {
+  const response = await request(dependencies, `${configuration.mirrorUrl}/api/auth/sign-in/email`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Origin: configuration.mirrorUrl },
     body: JSON.stringify({ email: configuration.administratorEmail, password: configuration.administratorPassword })
@@ -442,7 +450,7 @@ export async function runReconciliation(
     assetsSkipped: 0, warnings: []
   }
   const mirrorHeaders = await authenticateMirror(configuration, dependencies)
-  const repositoryResponse = await dependencies.fetch(`${configuration.mirrorUrl}/api/github/repositories`, { headers: mirrorHeaders })
+  const repositoryResponse = await request(dependencies, `${configuration.mirrorUrl}/api/github/repositories`, { headers: mirrorHeaders })
   if (!repositoryResponse.ok) throw endpointError('Gitea Mirror', 'repository listing', repositoryResponse.status)
   const payload = await repositoryResponse.json() as { repositories?: MirrorRepository[] }
   const mappings = await mapRepositories(payload.repositories ?? [], configuration, dependencies)
@@ -466,7 +474,7 @@ export async function runReconciliation(
   const releaseCache = new Map<string, GitHubRelease[]>()
   if (changed.length > 0) {
     const repositoryIds = [...new Set(changed.map(mapping => mapping.mirrorRepositoryId))]
-    const response = await dependencies.fetch(`${configuration.mirrorUrl}/api/job/sync-repo`, {
+    const response = await request(dependencies, `${configuration.mirrorUrl}/api/job/sync-repo`, {
       method: 'POST',
       headers: { ...mirrorHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ repositoryIds })

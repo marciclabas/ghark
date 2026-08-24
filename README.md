@@ -55,9 +55,26 @@ ghark status
 ghark logs
 ghark verify
 ghark reconcile
-ghark backup
+ghark backup start
 ghark update
 ```
+
+`ghark backup` shows the available backup commands. `ghark backup start` runs
+in the foreground and reports reconciliation, snapshot, retention, restart,
+and verification progress. Press Ctrl+C once to cancel; ghark still attempts
+to restore services that were running before the backup.
+
+Manage and inspect automatic backups independently:
+
+```sh
+ghark backup install
+ghark backup status
+ghark backup uninstall
+```
+
+Uninstalling automatic backups removes only the systemd schedule. It keeps the
+deployment and every local and remote snapshot. Use `ghark backup --help` for
+the complete command help.
 
 Other recovery and configuration commands are discoverable through `ghark help`.
 
@@ -82,7 +99,7 @@ was not enabled during migration, asks Gitea Mirror to sync those repositories,
 and repairs missing private release assets with authenticated streaming
 downloads. `ghark reconcile` runs the same operation manually for diagnosis.
 
-If online reconciliation fails, `ghark backup` still captures, retains, and
+If online reconciliation fails, `ghark backup start` still captures, retains, and
 verifies the last known good local state, then exits non-zero and records the
 snapshot as degraded. `ghark status` distinguishes that outcome from a failed
 snapshot lifecycle. If synchronization was deliberately stopped with
@@ -99,7 +116,7 @@ it authoritative and must be an operator decision:
 
 ```sh
 ghark stop-sync
-ghark backup
+ghark backup start
 ghark failover-guide
 ```
 

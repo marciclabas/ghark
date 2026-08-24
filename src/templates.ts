@@ -203,7 +203,7 @@ Type=oneshot
 User=${user.username}
 Group=${user.gid}
 Environment=HOME=${user.home}
-ExecStart=${root}/.cli/node_modules/.bin/ghark backup
+ExecStart=${root}/.cli/node_modules/.bin/ghark backup start
 `
 }
 
