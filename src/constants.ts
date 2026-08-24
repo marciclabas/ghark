@@ -1,5 +1,14 @@
+import { readFileSync } from 'node:fs'
+
+const packageManifest = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+) as { name?: string, version?: string }
+
 export const PACKAGE_NAME = '@marciclabas/ghark'
-export const PACKAGE_VERSION = '0.1.0'
+if (packageManifest.name !== PACKAGE_NAME || !packageManifest.version) {
+  throw new Error(`Cannot read ${PACKAGE_NAME} version from package.json`)
+}
+export const PACKAGE_VERSION = packageManifest.version
 export const SCHEMA_VERSION = 1
 
 export const images = {
