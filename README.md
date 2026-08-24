@@ -78,6 +78,16 @@ the complete command help.
 
 Other recovery and configuration commands are discoverable through `ghark help`.
 
+To remove the containers, automatic backup timer, and managed command launcher:
+
+```sh
+ghark uninstall
+```
+
+The command asks whether to retain `~/ghark` for a later reinstall or also
+delete all local mirrored data and credentials. It never deletes the remote
+restic repository in S3 or R2.
+
 Forgejo and Gitea Mirror listen only on loopback by default. `ghark status`
 prints their URLs and an SSH tunnel command for remote access.
 

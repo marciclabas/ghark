@@ -21,6 +21,7 @@ import { restore } from './restore.js'
 import { reconcile } from './reconcile.js'
 import { installTimer, removeTimer } from './systemd.js'
 import type { DeploymentManifest } from './types.js'
+import { uninstall } from './uninstall.js'
 
 const help = `ghark ${PACKAGE_VERSION} — Your GitHub repositories, safely aboard.
 
@@ -43,6 +44,7 @@ Commands:
   stop-sync                Stop GitHub synchronization for failover
   failover-guide           Print the manual promotion procedure
   install-timer            Compatibility alias for backup install
+  uninstall                Remove ghark; optionally delete all local data
   version                  Print the ghark version
   help                     Show this help
 `
@@ -140,6 +142,9 @@ async function main(): Promise<void> {
       console.log('Automatic backup scheduling installed.')
       return
     }
+    case 'uninstall':
+      await uninstall(root, user)
+      return
     case 'version':
     case '--version':
     case '-v':

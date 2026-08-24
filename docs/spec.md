@@ -322,6 +322,7 @@ ghark update                 apply a compatible ghark/upstream update
 ghark stop-sync              stop Gitea Mirror for failover
 ghark failover-guide         inspect readiness and print promotion steps
 ghark install-timer          compatibility alias for backup install
+ghark uninstall              remove services; optionally delete local data
 ```
 
 Commands always operate on `~/ghark`; there is no directory option or

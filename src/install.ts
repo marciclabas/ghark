@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync, symlinkSync, unlinkSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, mkdirSync, readlinkSync, symlinkSync, unlinkSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { PACKAGE_NAME, PACKAGE_VERSION } from './constants.js'
 import { writeAtomic } from './files.js'
 import { deploymentFiles } from './paths.js'
@@ -27,4 +27,23 @@ export function installPinnedCli(root: string, user: UserContext): void {
     run('chown', ['-h', owner, launcher])
   }
   console.log(`Installed launcher: ${launcher}`)
+}
+
+export function removePinnedCli(root: string, user: UserContext): void {
+  const launcher = join(user.home, '.local', 'bin', 'ghark')
+  let target: string
+  try {
+    target = readlinkSync(launcher)
+  } catch {
+    if (existsSync(launcher)) console.warn(`Kept ${launcher} because it is not ghark's managed symlink.`)
+    return
+  }
+
+  const installedBinary = join(root, '.cli', 'node_modules', '.bin', 'ghark')
+  if (resolve(dirname(launcher), target) !== resolve(installedBinary)) {
+    console.warn(`Kept ${launcher} because it points outside this ghark deployment.`)
+    return
+  }
+  unlinkSync(launcher)
+  console.log(`Removed launcher: ${launcher}`)
 }
